@@ -12,7 +12,7 @@ Breeze32
 
 [![Build Status](https://travis-ci.org/AndreasBriese/ipLocator.png?branch=master)](http://travis-ci.org/AndreasBriese/ipLocator)
 
-Actual version of the breeze PRNG: https://github.com/AndreasBriese/breeze
+Actual version of the breeze PRNG: (That was the old one with many blabla: https://github.com/AndreasBriese/breeze)
 
 import with `go get github.com/AndreasBriese/breeze32`
 
