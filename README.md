@@ -47,7 +47,7 @@ __Benchmarks__ (`go test -bench=.`)
 
 go version go1.10.2 darwin/amd64 on MBP2013 i7 8GB Ram 
 
-[random Bytes (gray 4kx2k)](https://github.com/AndreasBriese/breeze32/blob/master/randPad.png)
+[random Bytes (gray 4kx2k)](https://github.com/AndreasBriese/breeze32/blob/master/rand.png)
 
 __License__
 MIT-Style for software use // see License
