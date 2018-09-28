@@ -7,9 +7,9 @@ import (
 	"math/rand"
 	// "strings"
 	"os"
-	"sync"
+	// "sync"
 	"testing"
-	"time"
+	// "time"
 )
 
 const CHARS = "!abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890#"
@@ -227,21 +227,21 @@ func Example_CsVPrngIntN65535() {
 }
 
 */
-func Example_CsVbreezeRandIntN65535() {
-	randb := new(Breeze32)
-	// randb.Init(uint64(time.Now().UnixNano()))
-	randb.Init(123456789)
-	sum := 0
-	ch := exportCsv("breezeRand.csv")
-	for i := 0; i < 1000000; i++ {
-		rd := randb.RandIntN(166)
-		sum += rd
-		ch <- rd
-	}
-	close(ch)
-	fmt.Println(sum)
-	// Output: 82462458
-}
+// func Example_CsVbreezeRandIntN65535() {
+// 	randb := new(Breeze32)
+// 	// randb.Init(uint64(time.Now().UnixNano()))
+// 	randb.Init(123456789)
+// 	sum := 0
+// 	ch := exportCsv("breezeRand.csv")
+// 	for i := 0; i < 1000000; i++ {
+// 		rd := randb.RandIntN(166)
+// 		sum += rd
+// 		ch <- rd
+// 	}
+// 	close(ch)
+// 	fmt.Println(sum)
+// 	// Output: 82462458
+// }
 
 /*
 
@@ -261,37 +261,37 @@ func Example_CsVPrngIntN65535() {
 }
 */
 
-func ExampleMP() {
-	randb := new(Breeze32)
-	randb.Init(123)
-	wg := new(sync.WaitGroup)
+// func ExampleMP() {
+// 	randb := new(Breeze32)
+// 	randb.Init(123)
+// 	wg := new(sync.WaitGroup)
 
-	mpF := func(randb *Breeze32, wg *sync.WaitGroup) {
-		l := make([]uint8, 1000000)
-		r := uint8(0)
-		for i := range l {
-			l[i] = randb.ByteMP(&r)
-		}
-		// fmt.Println(l)
-		wg.Done()
-	}
+// 	mpF := func(randb *Breeze32, wg *sync.WaitGroup) {
+// 		l := make([]uint8, 1000000)
+// 		r := uint8(0)
+// 		for i := range l {
+// 			l[i] = randb.ByteMP(&r)
+// 		}
+// 		// fmt.Println(l)
+// 		wg.Done()
+// 	}
 
-	wg.Add(12)
-	st := time.Now()
-	// 4 Goroutines
-	go mpF(randb, wg)
-	go mpF(randb, wg)
-	go mpF(randb, wg)
-	go mpF(randb, wg)
-	go mpF(randb, wg)
-	go mpF(randb, wg)
-	go mpF(randb, wg)
-	go mpF(randb, wg)
-	go mpF(randb, wg)
-	go mpF(randb, wg)
-	go mpF(randb, wg)
-	go mpF(randb, wg)
-	wg.Wait()
-	fmt.Println(time.Since(st).Nanoseconds()/12000000, "ns/op 12 parallel (total 12e6)")
-	////  Output: ff
-}
+// 	wg.Add(12)
+// 	st := time.Now()
+// 	// 4 Goroutines
+// 	go mpF(randb, wg)
+// 	go mpF(randb, wg)
+// 	go mpF(randb, wg)
+// 	go mpF(randb, wg)
+// 	go mpF(randb, wg)
+// 	go mpF(randb, wg)
+// 	go mpF(randb, wg)
+// 	go mpF(randb, wg)
+// 	go mpF(randb, wg)
+// 	go mpF(randb, wg)
+// 	go mpF(randb, wg)
+// 	go mpF(randb, wg)
+// 	wg.Wait()
+// 	fmt.Println(time.Since(st).Nanoseconds()/12000000, "ns/op 12 parallel (total 12e6)")
+// 	////  Output: ff
+// }
