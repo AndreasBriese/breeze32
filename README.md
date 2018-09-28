@@ -1,11 +1,5 @@
-// README.md
 
-##"Drain Random from Chaos."
-##Breeze - a new family of fast CB-PRNG
-
-####Dr. Andreas Briese
-#####2018/09/24   
-#####eduToolbox@Bri-C GmbH, Sarstedt
+_"Drain Random from Chaos. Breeze - a new family of fast CB-PRNG"_
 
 Breeze32 
 ========
@@ -51,3 +45,7 @@ go version go1.10.2 darwin/amd64 on MBP2013 i7 8GB Ram
 
 __License__
 MIT-Style for software use // see License
+
+Dr. Andreas Briese
+2018/09/24   
+eduToolbox@Bri-C GmbH, Sarstedt
