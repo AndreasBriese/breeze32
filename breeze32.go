@@ -123,35 +123,35 @@ func (l *Breeze32) roundTrip() {
 	newState3 *= 3.98 * l.State3
 	newState4 := (1.0 - l.State4)
 	newState4 *= 3.995 * l.State4
-	// switch newState1 * newState2 * newState3 * newState4 {
-	// case 0:
-	// 	s1 := math.Float64bits(l.State1) ^ math.Float64bits(l.State2) ^ math.Float64bits(l.State3) ^ math.Float64bits(l.State4)
-	// 	l.seedr([2]uint64{s1, s1 ^ 0xffffffffffffffff})
-	// 	// or panic("LM is gone")
-	// default:
-	l.State1 = 1.0 - newState2
-	l.State2 = 1.0 - newState3
-	l.State3 = 1.0 - newState4
-	l.State4 = 1.0 - newState1
-	// }
+	switch newState1 * newState2 * newState3 * newState4 {
+	case 0:
+		s1 := math.Float64bits(l.State1) ^ math.Float64bits(l.State2) ^ math.Float64bits(l.State3) ^ math.Float64bits(l.State4)
+		l.seedr([2]uint64{s1, s1 ^ 0xffffffffffffffff})
+		panic("LM is gone")
+	default:
+		l.State1 = 1.0 - newState2
+		l.State2 = 1.0 - newState3
+		l.State3 = 1.0 - newState4
+		l.State4 = 1.0 - newState1
+	}
 
 	// l.mutex.Lock()
 	// defer l.mutex.Unlock()
 	l.idx = 0
 
-	l.State[0] = ((math.Float64bits(l.State1) >> 5) << 18)
+	l.State[0] ^= ((math.Float64bits(l.State1) >> 5) << 18)
 	l.State[0] ^= ((math.Float64bits(l.State3) >> 5) << 22)
 	l.State[0] ^= ((math.Float64bits(l.State2) >> 5) & 0x2fffff)
 
-	l.State[1] = ((math.Float64bits(l.State3) >> 5) << 18)
+	l.State[1] ^= ((math.Float64bits(l.State3) >> 5) << 18)
 	l.State[1] ^= ((math.Float64bits(l.State2) >> 5) << 22)
 	l.State[1] ^= ((math.Float64bits(l.State4) >> 5) & 0x2fffff)
 
-	l.State[2] = ((math.Float64bits(l.State2) >> 5) << 18)
+	l.State[2] ^= ((math.Float64bits(l.State2) >> 5) << 18)
 	l.State[2] ^= ((math.Float64bits(l.State4) >> 5) << 22)
 	l.State[2] ^= ((math.Float64bits(l.State1) >> 5) & 0x2fffff)
 
-	l.State[3] = ((math.Float64bits(l.State4) >> 5) << 18)
+	l.State[3] ^= ((math.Float64bits(l.State4) >> 5) << 18)
 	l.State[3] ^= ((math.Float64bits(l.State1) >> 5) << 22)
 	l.State[3] ^= ((math.Float64bits(l.State3) >> 5) & 0x2fffff)
 
