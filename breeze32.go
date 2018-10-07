@@ -119,7 +119,6 @@ func (l *Breeze32) isSeeded() bool {
 // mixin (xoring) output states
 func (l *Breeze32) roundTrip() {
 
-calcChaos:
 	newState1 := (1.0 - l.State1)
 	newState1 *= 4.0 * l.State1
 	newState2 := (1.0 - l.State2)
@@ -132,7 +131,6 @@ calcChaos:
 	case 0:
 		s1 := math.Float64bits(l.State1) ^ math.Float64bits(l.State2) ^ math.Float64bits(l.State3) ^ math.Float64bits(l.State4)
 		l.seedr([2]uint64{s1, s1 ^ 0xffffffffffffffff})
-		goto calcChaos
 		// panic("LM is gone")
 	default:
 		l.State1 = 1.0 - newState2
