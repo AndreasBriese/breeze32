@@ -23,19 +23,24 @@ __Benchmarks__ (`go test -bench=.`)
     goos: darwin
     goarch: amd64
     pkg: github.com/AndreasBriese/breeze32
-    Benchmark_Init_and_Seed-8               10000000           186 ns/op
-    Benchmark_breeze_Uint64-8               200000000            8.45 ns/op
-    Benchmark_breeze_Uint32-8               200000000            7.61 ns/op
-    Benchmark_breeze_Uint8-8                200000000            6.49 ns/op
-    Benchmark_breeze_ByteMP-8               20000000            58.5 ns/op
-    Benchmark_breeze_RandIntN_8byte-8       100000000           14.5 ns/op
-    Benchmark_breeze_RandIntN_16byte-8      100000000           14.3 ns/op
-    Benchmark_breeze_RandIntN_32byte-8      100000000           14.3 ns/op
-    Benchmark_breeze_RandIntN_64byte-8      100000000           21.0 ns/op
-    Benchmark_mathRand_Intn_8byte-8         100000000           16.3 ns/op
-    Benchmark_mathRand_Intn_16byte-8        100000000           16.0 ns/op
-    Benchmark_mathRand_Intn_32byte-8        100000000           13.8 ns/op
-    Benchmark_mathRand_Intn_64byte-8        30000000            33.9 ns/op
+    Benchmark_Init_and_Seed          	10000000	       208 ns/op
+    Benchmark_breeze_Uint64          	200000000	         8.92 ns/op
+    Benchmark_breeze_Uint32          	200000000	         7.32 ns/op
+    Benchmark_breeze_Uint8           	200000000	         6.42 ns/op
+    Benchmark_breeze_ByteMP          	20000000	        64.5 ns/op
+    Benchmark_breeze_RandIntN_8byte  	100000000	        18.8 ns/op
+    Benchmark_breeze_RandIntN_16byte 	100000000	        18.4 ns/op
+    Benchmark_breeze_RandIntN_32byte 	100000000	        21.0 ns/op
+    Benchmark_breeze_RandIntN_64byte 	50000000	        22.9 ns/op
+    Benchmark_breeze_Float64         	100000000	        12.5 ns/op
+    Benchmark_breeze_Float32         	100000000	        11.2 ns/op
+    
+    Benchmark_mathRand_Intn_8byte    	100000000	        17.1 ns/op
+    Benchmark_mathRand_Intn_16byte   	100000000	        17.1 ns/op
+    Benchmark_mathRand_Intn_32byte   	100000000	        14.8 ns/op
+    Benchmark_mathRand_Intn_64byte   	30000000	        36.6 ns/op
+    Benchmark_mathRand_Float_64      	100000000	        13.0 ns/op
+    Benchmark_mathRand_Float_32      	100000000	        16.1 ns/op
     PASS
     ok      github.com/AndreasBriese/breeze32   30.911s
 
