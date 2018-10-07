@@ -52,10 +52,13 @@ var (
 		0xff00000000, 0xff0000000000,
 		0xff000000000000, 0xff00000000000000,
 	}
-	maskUint32 = [2]uint64{
-		0xff | 0xff00 | 0xff0000 | 0xff000000,                                 // 0
-		0xff00000000 | 0xff0000000000 | 0xff000000000000 | 0xff00000000000000, // 32
-	}
+)
+
+const (
+	f64DIV = float64(1 << 64)
+	f53DIV = float64(1 << 53)
+	f32DIV = float64(1 << 32)
+	f23DIV = float32(1 << 23)
 )
 
 // Reset resets to the initial (empty) state
@@ -178,7 +181,7 @@ func (l *Breeze32) RandIntN(n int) int {
 // takes an upper limit n and returns random values <n [0,n)
 func (l *Breeze32) uint64N(n int) (r uint64) {
 mining:
-	mf := float64(l.State[l.idx>>3]) / float64((1 << 64))
+	mf := float64(l.State[l.idx>>3]) / f64DIV
 	r = uint64(float64(n) * mf)
 	l.idx += 8
 	if l.idx > 31 {
@@ -208,8 +211,8 @@ func (l *Breeze32) Uint64(r *uint64) uint64 {
 // takes an upper limit n and returns random values <n [0,n)
 func (l *Breeze32) uint32N(n int) (r uint32) {
 mining:
-	mf := float64((l.State[l.idx>>3] & maskUint32[l.idx&1]) >> ((l.idx & 1) << 5))
-	mf /= float64((1 << 32))
+	// mf := float64((l.State[l.idx>>3]&maskUint32[(l.idx>>2)&1])>>(((l.idx>>2)&1)<<5)) / f32DIV
+	mf := float64(l.State[l.idx>>3]>>(((l.idx>>2)&1)<<5)) / f32DIV
 	r = uint32(float64(n) * mf)
 	l.idx += 4
 	if l.idx > 31 {
@@ -226,7 +229,8 @@ mining:
 // and returns r (for comodity)
 // blazing fast <- no further floating point arithmetics
 func (l *Breeze32) Uint32(r *uint32) uint32 {
-	*r = uint32(l.State[l.idx>>3] & maskUint32[l.idx&1] >> ((l.idx & 1) << 5))
+	// *r = uint32(l.State[l.idx>>3]&maskUint32[(l.idx>>2)&1]) >> (((l.idx >> 2) & 1) << 5)
+	*r = uint32(l.State[l.idx>>3] >> (((l.idx >> 2) & 1) << 5))
 	l.idx += 4
 	if l.idx > 31 {
 		l.roundTrip()
@@ -259,11 +263,13 @@ func (l *Breeze32) Uint8(r *uint8) uint8 {
 	return *r
 }
 
+// Byte(*uint8) returns one Byte  --  not threadsafe
 // for compatibility in my code
 func (l *Breeze32) Byte(r *uint8) uint8 {
 	return l.Uint8(r)
 }
 
+// ByteMP(*uint8) returns threadsafe one Byte
 func (l *Breeze32) ByteMP(r *uint8) uint8 {
 	l.mutex.Lock()
 	defer l.mutex.Unlock()
@@ -273,4 +279,18 @@ func (l *Breeze32) ByteMP(r *uint8) uint8 {
 	}
 	*r = uint8(l.State[l.idx>>3] & maskUint8[l.idx&7] >> ((l.idx & 7) << 3))
 	return *r
+}
+
+// Float64() returns a float64 (double precision)
+func (l *Breeze32) Float64() float64 {
+	r := uint64(1)
+	l.Uint64(&r)
+	return float64(r>>11) / f53DIV
+}
+
+// Float32() returns a float32 (single precision)
+func (l *Breeze32) Float32() float32 {
+	r := uint32(1)
+	l.Uint32(&r)
+	return float32(r>>9) / f23DIV
 }
