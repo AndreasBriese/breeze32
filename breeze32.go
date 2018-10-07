@@ -27,7 +27,7 @@ package breeze32
 import (
 	"math"
 	"sync"
-	"time"
+	// "time" uncomment to autoseed
 )
 
 // Breeze32
@@ -118,6 +118,8 @@ func (l *Breeze32) isSeeded() bool {
 // processes the output states from LMs states
 // mixin (xoring) output states
 func (l *Breeze32) roundTrip() {
+
+calcChaos:
 	newState1 := (1.0 - l.State1)
 	newState1 *= 4.0 * l.State1
 	newState2 := (1.0 - l.State2)
@@ -130,6 +132,7 @@ func (l *Breeze32) roundTrip() {
 	case 0:
 		s1 := math.Float64bits(l.State1) ^ math.Float64bits(l.State2) ^ math.Float64bits(l.State3) ^ math.Float64bits(l.State4)
 		l.seedr([2]uint64{s1, s1 ^ 0xffffffffffffffff})
+		goto calcChaos
 		// panic("LM is gone")
 	default:
 		l.State1 = 1.0 - newState2
@@ -142,21 +145,21 @@ func (l *Breeze32) roundTrip() {
 	// defer l.mutex.Unlock()
 	l.idx = 0
 
-	l.State[0] ^= ((math.Float64bits(l.State1) >> 5) << 18)
-	l.State[0] ^= ((math.Float64bits(l.State3) >> 5) << 22)
-	l.State[0] ^= ((math.Float64bits(l.State2) >> 5) & 0x2fffff)
+	l.State[0] ^= ((math.Float64bits(newState1) >> 5) << 18)
+	l.State[0] ^= ((math.Float64bits(newState3) >> 5) << 22)
+	l.State[0] ^= ((math.Float64bits(newState2) >> 5) & 0x2fffff)
 
-	l.State[1] ^= ((math.Float64bits(l.State3) >> 5) << 18)
-	l.State[1] ^= ((math.Float64bits(l.State2) >> 5) << 22)
-	l.State[1] ^= ((math.Float64bits(l.State4) >> 5) & 0x2fffff)
+	l.State[1] ^= ((math.Float64bits(newState3) >> 5) << 18)
+	l.State[1] ^= ((math.Float64bits(newState2) >> 5) << 22)
+	l.State[1] ^= ((math.Float64bits(newState4) >> 5) & 0x2fffff)
 
-	l.State[2] ^= ((math.Float64bits(l.State2) >> 5) << 18)
-	l.State[2] ^= ((math.Float64bits(l.State4) >> 5) << 22)
-	l.State[2] ^= ((math.Float64bits(l.State1) >> 5) & 0x2fffff)
+	l.State[2] ^= ((math.Float64bits(newState2) >> 5) << 18)
+	l.State[2] ^= ((math.Float64bits(newState4) >> 5) << 22)
+	l.State[2] ^= ((math.Float64bits(newState1) >> 5) & 0x2fffff)
 
-	l.State[3] ^= ((math.Float64bits(l.State4) >> 5) << 18)
-	l.State[3] ^= ((math.Float64bits(l.State1) >> 5) << 22)
-	l.State[3] ^= ((math.Float64bits(l.State3) >> 5) & 0x2fffff)
+	l.State[3] ^= ((math.Float64bits(newState4) >> 5) << 18)
+	l.State[3] ^= ((math.Float64bits(newState1) >> 5) << 22)
+	l.State[3] ^= ((math.Float64bits(newState3) >> 5) & 0x2fffff)
 
 }
 
@@ -164,9 +167,10 @@ func (l *Breeze32) roundTrip() {
 // takes an upper limit n and returns random values <n [0,n)
 // conditional autoseeding with time.Now().UnixNano()
 func (l *Breeze32) RandIntN(n int) int {
-	if !l.isSeeded() {
-		l.Init(uint64(time.Now().UnixNano()))
-	}
+	// uncomment to autoseed
+	// if !l.isSeeded() {
+	// 	l.Init(uint64(time.Now().UnixNano()))
+	// }
 
 	switch {
 	case n <= 1<<32:
@@ -211,7 +215,6 @@ func (l *Breeze32) Uint64(r *uint64) uint64 {
 // takes an upper limit n and returns random values <n [0,n)
 func (l *Breeze32) uint32N(n int) (r uint32) {
 mining:
-	// mf := float64((l.State[l.idx>>3]&maskUint32[(l.idx>>2)&1])>>(((l.idx>>2)&1)<<5)) / f32DIV
 	mf := float64(l.State[l.idx>>3]>>(((l.idx>>2)&1)<<5)) / f32DIV
 	r = uint32(float64(n) * mf)
 	l.idx += 4
@@ -229,7 +232,6 @@ mining:
 // and returns r (for comodity)
 // blazing fast <- no further floating point arithmetics
 func (l *Breeze32) Uint32(r *uint32) uint32 {
-	// *r = uint32(l.State[l.idx>>3]&maskUint32[(l.idx>>2)&1]) >> (((l.idx >> 2) & 1) << 5)
 	*r = uint32(l.State[l.idx>>3] >> (((l.idx >> 2) & 1) << 5))
 	l.idx += 4
 	if l.idx > 31 {
