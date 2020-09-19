@@ -172,10 +172,10 @@ func (l *Breeze32) RandIntN(n int) int {
 
 	switch {
 	case n <= 1<<32:
-		return int(l.uint32N(n + 1))
+		return int(l.Float32() * float32(n))
 	}
 
-	return int(l.uint64N(n + 1))
+	return int(l.Float64() * float64(n))
 }
 
 // uint64N(n int) (r uint64)
