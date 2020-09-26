@@ -170,11 +170,6 @@ func (l *Breeze32) RandIntN(n int) int {
 	// 	l.Init(uint64(time.Now().UnixNano()))
 	// }
 
-	switch {
-	case n <= 1<<32:
-		return int(l.Float32() * float32(n))
-	}
-
 	return int(l.Float64() * float64(n))
 }
 
